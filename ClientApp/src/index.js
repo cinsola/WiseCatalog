@@ -26,6 +26,6 @@ ReactDOM.render(
       <App />
     </ConnectedRouter>
   </Provider>,
-  rootElement);
-
+    rootElement);
+console.log("Sto eseguendo: " + React.version);
 registerServiceWorker();
