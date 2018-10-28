@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace WiseCatalog.Data
 {
-    public class ApplicationUserRole: IdentityRole
+    public class ApplicationUserRole : IdentityRole
     {
+        public string Description { get; internal set; }
     }
 }

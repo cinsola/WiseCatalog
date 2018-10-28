@@ -1,3 +1,7 @@
+using GraphiQl;
+using GraphQL;
+using GraphQL.DataLoader;
+using GraphQL.Types;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,7 +13,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NSwag.AspNetCore;
+using System;
 using WiseCatalog.Data;
+using WiseCatalog.Data.DTO;
+using WiseCatalog.Data.Repository;
+using WiseCatalog.Data.Schemas;
 
 namespace WiseCatalog
 {
@@ -30,18 +38,48 @@ namespace WiseCatalog
             services.AddIdentity<ApplicationUser, ApplicationUserRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 6;
+                options.Password.RequiredUniqueChars = 1;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.AllowedForNewUsers = true;
+                options.User.RequireUniqueEmail = true;
+            });
 
+            services.AddScoped<SurveyRepository>();
+            _configureGraphQL(services);
+            services.AddAuthentication();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
-            // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/build";
             });
         }
 
+        private void _configureGraphQL(IServiceCollection services)
+        {
+            services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
+            services.AddSingleton<QuestionQuery>();
+            services.AddSingleton<QuestionMutation>();
+
+            services.AddSingleton<QuestionType>();
+            services.AddSingleton<SurveyType>();
+            services.AddSingleton<QuestionInputType>();
+
+            var serviceProvider = services.BuildServiceProvider();
+            services.AddSingleton<ISchema>(new ApplicationMutableSchema(new FuncDependencyResolver(type => serviceProvider.GetService(type))));
+            //services.AddSingleton<IDataLoaderContextAccessor, DataLoaderContextAccessor>();
+            //services.AddSingleton<DataLoaderDocumentListener>();
+        }
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager, RoleManager<ApplicationUserRole> roleManager)
         {
             if (env.IsDevelopment())
             {
@@ -56,13 +94,14 @@ namespace WiseCatalog
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
+            app.UseGraphiQl();
+            app.UseAuthentication();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller}/{action=Index}/{id?}");
             });
-
             app.UseSwaggerUi3WithApiExplorer();
             app.UseSpa(spa =>
             {
@@ -73,7 +112,6 @@ namespace WiseCatalog
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
-
         }
     }
 }
