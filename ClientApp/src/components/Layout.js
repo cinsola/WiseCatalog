@@ -13,6 +13,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
+import CssBaseline from '@material-ui/core/CssBaseline';
 
 export default class Layout extends React.Component {
     constructor(props) {
@@ -34,6 +35,7 @@ export default class Layout extends React.Component {
     render() {
         return (
             <div>
+                <CssBaseline />
                 <AppBar position="static">
                     <Toolbar>
                         <IconButton
