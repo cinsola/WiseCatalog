@@ -34,7 +34,7 @@ namespace WiseCatalog
         public void ConfigureServices(IServiceCollection services)
         {
             var connection = Configuration.GetValue<string>("Connection");
-            services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlServer(connection));
+            services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlServer(connection), ServiceLifetime.Transient);
             services.AddIdentity<ApplicationUser, ApplicationUserRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
@@ -52,7 +52,7 @@ namespace WiseCatalog
                 options.User.RequireUniqueEmail = true;
             });
 
-            services.AddScoped<SurveyRepository>();
+            services.AddTransient<SurveyRepository>();
             _configureGraphQL(services);
             services.AddAuthentication();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
@@ -64,13 +64,13 @@ namespace WiseCatalog
 
         private void _configureGraphQL(IServiceCollection services)
         {
-            services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
-            services.AddSingleton<QuestionQuery>();
-            services.AddSingleton<QuestionMutation>();
+            services.AddTransient<IDocumentExecuter, ApplicationDocumentExecuter>();
+            services.AddTransient<QuestionQuery>();
+            services.AddTransient<QuestionMutation>();
 
-            services.AddSingleton<QuestionType>();
-            services.AddSingleton<SurveyType>();
-            services.AddSingleton<QuestionInputType>();
+            services.AddTransient<QuestionType>();
+            services.AddTransient<SurveyType>();
+            services.AddTransient<QuestionInputType>();
 
             var serviceProvider = services.BuildServiceProvider();
             services.AddSingleton<ISchema>(new ApplicationMutableSchema(new FuncDependencyResolver(type => serviceProvider.GetService(type))));

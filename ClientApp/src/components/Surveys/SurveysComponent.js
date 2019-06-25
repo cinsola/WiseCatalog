@@ -1,28 +1,26 @@
-﻿import React, { Component } from 'react';
+﻿import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { actionCreators } from './SurveysStore';
 import { Survey } from './SurveyComponent';
+import WithLoading from '../LoadingHOC';
 class Surveys extends React.Component {
     constructor(props) {
         super(props);
     }
 
-    componentDidMount() {
-        this.props.requestSurveys();
+    onSurveyChoosen(survey) {
+        this.props.requestSurvey(survey.id)
     }
 
     render() {
-        if (this.props.isLoading === false) {
-            return (<section>
+        return (
+            <section>
                 {this.props.surveys.map(survey =>
-                    <Survey key={survey.id} survey={survey} />
+                    <Survey key={survey.id} survey={survey} onSurveyChoosen={() => this.onSurveyChoosen(survey)} />
                 )}
             </section>);
-        } else {
-            return <h1>carimento</h1>
-        }
     }
 }
-
-export default connect(state => state.surveysReducer, dispatch => bindActionCreators(actionCreators, dispatch))(Surveys);
+const SurveysWithLoading = WithLoading(Surveys, (_context) => _context.props.requestSurveys());
+export default connect(state => state.surveysReducer, dispatch => bindActionCreators(actionCreators, dispatch))(SurveysWithLoading);

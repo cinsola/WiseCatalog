@@ -3,7 +3,7 @@ const receiveSurveys = "RECEIVE_SURVEYS";
 const requestSurvey = "REQUEST_SURVEY";
 const receiveSurvey = "RECEIVE_SURVEY";
 const graphQlService = "graphql";
-const initialState = { surveys: [], isLoading: false, survey: null };
+const initialState = { surveys: [], isLoading: true, survey: null };
 export const actionCreators = {
     requestSurveys: () => async function (dispatch, getState) {
         dispatch({ type: requestSurveys });

@@ -51,14 +51,13 @@ namespace WiseCatalog.Data.Repository
             return item.Entity;
         }
 
-        internal Task<IEnumerable<Question>> GetQuestionsBySurvey(int id)
+        internal IEnumerable<Question> GetQuestionsBySurvey(int id)
         {
-            return Task.FromResult<IEnumerable<Question>>(_dbContext.Questions.Where(x => x.SurveyId == id).ToList());
+            return _dbContext.Questions.Where(x => x.SurveyId == id).ToList();
         }
-        internal Task<Survey> GetSurveyByQuestion(int id)
+        internal Survey GetSurveyByQuestion(int id)
         {
-            return Task.FromResult<Survey>(_dbContext.Questions.Include(x => x.Survey).First(x => x.Id == id).Survey);
+            return _dbContext.Questions.Include(x => x.Survey).First(x => x.Id == id).Survey;
         }
-
     }
 }

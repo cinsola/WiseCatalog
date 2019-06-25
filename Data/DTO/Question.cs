@@ -29,7 +29,7 @@ namespace WiseCatalog.Data.DTO
             Field(x => x.Skippable);
             Field<SurveyType, Survey>()
                 .Name("Survey")
-                .ResolveAsync(ctx => {
+                .Resolve(ctx => {
                     return _surveyRepository.GetSurveyByQuestion(ctx.Source.Id);
                 });
         }

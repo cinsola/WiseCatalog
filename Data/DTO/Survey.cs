@@ -25,7 +25,7 @@ namespace WiseCatalog.Data.DTO
             Field(x => x.Name);
             Field<ListGraphType<QuestionType>, IEnumerable<Question>>()
                 .Name("Questions")
-                .ResolveAsync(ctx => {
+                .Resolve(ctx => {
                     return _surveyRepository.GetQuestionsBySurvey(ctx.Source.Id);
                 });
         }

@@ -2,7 +2,7 @@
 import { Route } from 'react-router';
 import Layout from './components/Layout';
 import Home from './components/Home';
-import SurveyEditor from './components/Surveys/SurveyEditorComponent';
+import SurveyDetail from './components/Surveys/SurveyDetailComponent';
 export default class App extends React.Component {
     constructor(props) {
         super(props);
@@ -11,8 +11,8 @@ export default class App extends React.Component {
     render() {
         return (
             <Layout>
-                <Route exact path='/' component={Home} />
-                <Route path='/survey/edit/:id' component={SurveyEditor} />
+                <Route exact path='/' component={(props) => <Home {...props} />} />
+                <Route path='/survey/edit/:id' component={(props) => <SurveyDetail {...props} />} />
             </Layout>
         );
     }

@@ -35,5 +35,5 @@ ReactDOM.render(
             </MuiThemeProvider>
     </ConnectedRouter>
   </Provider>, rootElement);
-console.log("Sto eseguendo: " + React.version);
+console.log("Running: " + React.version);
 registerServiceWorker();

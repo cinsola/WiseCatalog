@@ -35,7 +35,7 @@ namespace wise_catalog.Controllers
                 Inputs = inputs
             };
             //executionOptions.Listeners.Add(_documentListener);
-            var result = await _documentExecuter.ExecuteAsync(executionOptions).ConfigureAwait(false);
+            var result = await _documentExecuter.ExecuteAsync(executionOptions);
             if (result.Errors?.Count > 0)
             {
                 return BadRequest(result);

@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using WiseCatalog.Data.DTO;
 
 namespace WiseCatalog.Data
@@ -28,22 +26,33 @@ namespace WiseCatalog.Data
         {
             ApplicationUsersInitializer.SeedData(_userManager, _roleManager);
             var user = Users.First(x => x.Email == "test@localhost");
-            Survey defaultSurvey = new Survey
-            {
+            Survey[] defaultSurveys = new Survey[] {
+                new Survey {
                 ApplicationUser = user,
-                Name = "Libro",
+                Name = "Book Survey",
                 Questions = new List<Question>(
 
                         new Question[]
                         {
-                             new Question { Name = "Titolo del libro" },
-                             new Question { Name = "Numero di pagine" }
+                             new Question { Name = "Can you tell me the book title?" },
+                             new Question { Name = "Can you tell me the number of pages?" }
                         }
-                    )
+                    ) },
+                new Survey {
+                ApplicationUser = user,
+                Name = "Film Survey",
+                Questions = new List<Question>(
+                    new Question[]
+                    {
+                        new Question { Name = "Can you tell me the movie title?" },
+                        new Question { Name = "Can you tell me the movie duration?" }
+                    })
+                }
             };
+
             if (this.Surveys.Any() == false)
             {
-                this.Surveys.Add(defaultSurvey);
+                this.Surveys.AddRange(defaultSurveys);
                 this.SaveChanges();
             }
         }
