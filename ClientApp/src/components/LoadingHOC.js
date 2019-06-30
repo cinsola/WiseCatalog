@@ -6,7 +6,7 @@ export default function WithLoading(WrappedComponent, loadingDelegate) {
             this.loadingDelegate = loadingDelegate;
         }
 
-        componentDidMount() {
+        componentWillMount() {
             loadingDelegate(this);
         }
 
@@ -14,7 +14,7 @@ export default function WithLoading(WrappedComponent, loadingDelegate) {
             if (this.props.isLoading === true) {
                 return (
                     <div>
-                        <div>carimento in corso...</div>
+                        <div>Loading...</div>
                     </div>
                 );
             } else {

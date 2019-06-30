@@ -57,11 +57,14 @@ export const reducer = function(state, action) {
     state = state || initialState;
     switch (action.type) {
         case requestSurveys:
-        case requestSurvey:
             return {
                 ...state,
                 isLoading: true
             };
+        case requestSurvey:
+            return Object.assign({}, state, {
+                isLoading: true
+            });
         case receiveSurveys:
             return {
                 ...state,

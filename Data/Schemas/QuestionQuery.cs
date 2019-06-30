@@ -11,7 +11,7 @@ namespace WiseCatalog.Data.Schemas
 {
     public class QuestionQuery : ObjectGraphType
     {
-        public QuestionQuery(SurveyRepository _surveyRepository)
+        public QuestionQuery(SurveyRepository _surveyRepository, ApplicationDbContextFactory _contextFactory)
         {
             Field<QuestionType>(
                 "question",
@@ -32,7 +32,6 @@ namespace WiseCatalog.Data.Schemas
             Field<ListGraphType<SurveyType>>(
                 "surveys",
                 resolve: context => _surveyRepository.Surveys());
-
         }
     }
 }

@@ -14,8 +14,11 @@ namespace WiseCatalog
             {
                 var userManager = (UserManager<ApplicationUser>)scope.ServiceProvider.GetService(typeof(UserManager<ApplicationUser>));
                 var roleManager = (RoleManager<ApplicationUserRole>)scope.ServiceProvider.GetService(typeof(RoleManager<ApplicationUserRole>));
-                var dbContext = (ApplicationDbContext)scope.ServiceProvider.GetService(typeof(ApplicationDbContext));
-                dbContext.EnsureSeedData(userManager, roleManager);
+                var dbContext = (ApplicationDbContextFactory)scope.ServiceProvider.GetService(typeof(ApplicationDbContextFactory));
+                using (var scopedContext = dbContext.CreateDbContext())
+                {
+                    scopedContext.EnsureSeedData(userManager, roleManager);
+                }
             }
             host.Run();
         }

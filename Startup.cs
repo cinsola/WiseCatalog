@@ -1,13 +1,11 @@
 using GraphiQl;
 using GraphQL;
-using GraphQL.DataLoader;
 using GraphQL.Types;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -35,6 +33,7 @@ namespace WiseCatalog
         {
             var connection = Configuration.GetValue<string>("Connection");
             services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlServer(connection), ServiceLifetime.Transient);
+            services.AddSingleton<ApplicationDbContextFactory>(new ApplicationDbContextFactory(connection));
             services.AddIdentity<ApplicationUser, ApplicationUserRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
@@ -52,7 +51,7 @@ namespace WiseCatalog
                 options.User.RequireUniqueEmail = true;
             });
 
-            services.AddTransient<SurveyRepository>();
+            services.AddScoped<SurveyRepository>();
             _configureGraphQL(services);
             services.AddAuthentication();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
@@ -64,13 +63,13 @@ namespace WiseCatalog
 
         private void _configureGraphQL(IServiceCollection services)
         {
-            services.AddTransient<IDocumentExecuter, ApplicationDocumentExecuter>();
-            services.AddTransient<QuestionQuery>();
-            services.AddTransient<QuestionMutation>();
+            services.AddScoped<IDocumentExecuter, ApplicationDocumentExecuter>();
+            services.AddScoped<QuestionQuery>();
+            services.AddScoped<QuestionMutation>();
 
-            services.AddTransient<QuestionType>();
-            services.AddTransient<SurveyType>();
-            services.AddTransient<QuestionInputType>();
+            services.AddScoped<QuestionType>();
+            services.AddScoped<SurveyType>();
+            services.AddScoped<QuestionInputType>();
 
             var serviceProvider = services.BuildServiceProvider();
             services.AddSingleton<ISchema>(new ApplicationMutableSchema(new FuncDependencyResolver(type => serviceProvider.GetService(type))));

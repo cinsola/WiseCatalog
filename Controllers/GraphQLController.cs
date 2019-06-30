@@ -14,13 +14,10 @@ namespace wise_catalog.Controllers
     {
         private readonly IDocumentExecuter _documentExecuter;
         private readonly ISchema _schema;
-        //private readonly DataLoaderDocumentListener _documentListener;
-
-        public GraphQLController(ISchema schema, IDocumentExecuter documentExecuter /*,DataLoaderDocumentListener documentListener*/)
+        public GraphQLController(ISchema schema, IDocumentExecuter documentExecuter)
         {
             _schema = schema;
             _documentExecuter = documentExecuter;
-            //_documentListener = documentListener;
         }
 
         [HttpPost]
@@ -32,15 +29,14 @@ namespace wise_catalog.Controllers
             {
                 Schema = _schema,
                 Query = query.Query,
-                Inputs = inputs
+                Inputs = inputs, 
             };
-            //executionOptions.Listeners.Add(_documentListener);
+
             var result = await _documentExecuter.ExecuteAsync(executionOptions);
             if (result.Errors?.Count > 0)
             {
                 return BadRequest(result);
             }
-
             return Ok(result);
         }
     }

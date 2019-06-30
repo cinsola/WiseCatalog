@@ -9,15 +9,11 @@ class Surveys extends React.Component {
         super(props);
     }
 
-    onSurveyChoosen(survey) {
-        this.props.requestSurvey(survey.id)
-    }
-
     render() {
         return (
             <section>
                 {this.props.surveys.map(survey =>
-                    <Survey key={survey.id} survey={survey} onSurveyChoosen={() => this.onSurveyChoosen(survey)} />
+                    <Survey key={survey.id} survey={survey} />
                 )}
             </section>);
     }
