@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { actionCreators } from './SurveysStore';
 import { Survey } from './SurveyComponent';
-import { Question } from './QuestionComponent';
+import { SurveyQuestion } from './SurveyQuestionComponent';
 import WithLoading from '../LoadingHOC';
 class SurveyDetailComponent extends React.Component {
     constructor(props) {
@@ -15,7 +15,7 @@ class SurveyDetailComponent extends React.Component {
             <div>
                 <Survey survey={this.props.survey} withLinks={false} />
                 {this.props.survey.questions.map(question =>
-                    <Question key={question.id} question={question} />
+                    <SurveyQuestion key={question.id} question={question} />
                 )}
             </div>
         );
