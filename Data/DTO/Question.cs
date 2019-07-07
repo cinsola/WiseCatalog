@@ -16,6 +16,11 @@ namespace WiseCatalog.Data.DTO
         public Survey Survey { get; set; }
         public int SurveyId { get; set; }
         public bool Skippable { get; set; }
+        public void Rename(string name)
+        {
+            this.Name = name;
+            this.Synch();
+        }
     }
 
     public class QuestionType: HistoricizedDtoType<Question>
@@ -42,6 +47,16 @@ namespace WiseCatalog.Data.DTO
             Name = "QuestionInput";
             Field<NonNullGraphType<StringGraphType>>("name");
             Field<NonNullGraphType<IntGraphType>>("surveyId");
+        }
+    }
+
+    public class QuestionEditType : InputObjectGraphType
+    {
+        public QuestionEditType()
+        {
+            Name = "QuestionEdit";
+            Field<NonNullGraphType<IntGraphType>>("id");
+            Field<NonNullGraphType<StringGraphType>>("name");
         }
     }
 }

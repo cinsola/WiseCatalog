@@ -2,7 +2,7 @@
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { actionCreators } from './SurveysStore';
-import { Survey } from './SurveyComponent';
+import Survey from './SurveyComponent';
 import { SurveyQuestion } from './SurveyQuestionComponent';
 import WithLoading from '../LoadingHOC';
 class SurveyDetailComponent extends React.Component {
@@ -10,12 +10,16 @@ class SurveyDetailComponent extends React.Component {
         super(props);
     }
 
+    sendMutation(questioId, value) {
+        this.props.requestSurveyQuestionMutation(questioId, this.props.survey.id, value);
+    }
+
     render() {
         return (
             <div>
                 <Survey survey={this.props.survey} withLinks={false} />
                 {this.props.survey.questions.map(question =>
-                    <SurveyQuestion key={question.id} question={question} />
+                    <SurveyQuestion key={question.id} question={question} sendMutation={(val) => this.sendMutation(question.id, val.name)} />
                 )}
             </div>
         );

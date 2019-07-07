@@ -2,18 +2,22 @@
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { actionCreators } from './SurveysStore';
-import { Survey } from './SurveyComponent';
+import Survey from './SurveyComponent';
 import WithLoading from '../LoadingHOC';
 class Surveys extends React.Component {
     constructor(props) {
         super(props);
     }
 
+    onSurveyChoosen() {
+        this.props.resetLoading();
+    }
+
     render() {
         return (
             <section>
                 {this.props.surveys.map(survey =>
-                    <Survey key={survey.id} survey={survey} />
+                    <Survey key={survey.id} survey={survey} onSurveyChoosen={() => this.onSurveyChoosen()} />
                 )}
             </section>);
     }

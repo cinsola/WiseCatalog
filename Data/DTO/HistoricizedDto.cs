@@ -15,6 +15,11 @@ namespace WiseCatalog.Data.DTO
         public void Delete()
         {
             this.IsDeleted = true;
+            this.Synch();
+        }
+
+        public void Synch()
+        {
             this.LastModified = DateTime.UtcNow;
         }
     }

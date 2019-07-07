@@ -54,6 +54,17 @@ namespace WiseCatalog.Data.Repository
             }
         }
 
+        internal Question EditQuestion(int questionId, Question questionUpdated)
+        {
+            using (var _dbContext = _contextFactory.CreateDbContext())
+            {
+                var item = _dbContext.Questions.Find(questionId);
+                if (item.Name != questionUpdated.Name) { item.Rename(questionUpdated.Name); }
+                _dbContext.SaveChanges();
+                return item;
+            }
+        }
+
         internal List<Question> GetQuestionsBySurvey(int id)
         {
             return _contextFactory.InvokeSafe(c => c.Questions.Where(x => x.SurveyId == id).ToList());
