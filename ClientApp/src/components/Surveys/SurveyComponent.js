@@ -11,7 +11,9 @@ export default class Survey extends React.Component {
     }
 
     onSurveyChoosen() {
-        this.props.onSurveyChoosen();
+        if ('onSurveyChoosen' in this.props) {
+            this.props.onSurveyChoosen();
+        }
     }
 
     render() {
