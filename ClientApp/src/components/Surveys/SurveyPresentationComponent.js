@@ -5,7 +5,7 @@ import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { Link } from 'react-router-dom';
-export default class Survey extends React.Component {
+export default class SurveyPresentationComponent extends React.Component {
     constructor(props) {
         super(props);
     }

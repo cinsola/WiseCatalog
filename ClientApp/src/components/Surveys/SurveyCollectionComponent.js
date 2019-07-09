@@ -2,9 +2,9 @@
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { actionCreators } from './SurveysStore';
-import Survey from './SurveyComponent';
 import WithLoading from '../LoadingHOC';
-class Surveys extends React.Component {
+import SurveyPresentationComponent from './SurveyPresentationComponent';
+class SurveyCollectionComponent extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -14,10 +14,10 @@ class Surveys extends React.Component {
         return (
             <section>
                 {this.props.surveys.map(survey =>
-                    <Survey key={survey.id} survey={survey} />
+                    <SurveyPresentationComponent key={survey.id} survey={survey} />
                 )}
             </section>);
     }
 }
-const SurveysWithLoading = WithLoading(Surveys, (_context) => _context.props.requestSurveys());
+const SurveysWithLoading = WithLoading(SurveyCollectionComponent, (_context) => _context.props.requestSurveys());
 export default connect(state => state.surveysReducer, dispatch => bindActionCreators(actionCreators, dispatch))(SurveysWithLoading);

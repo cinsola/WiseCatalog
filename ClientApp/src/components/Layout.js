@@ -14,8 +14,10 @@ import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { Link } from 'react-router-dom';
+import { withRouter } from "react-router-dom";
 
-export default class Layout extends React.Component {
+class Layout extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -32,6 +34,10 @@ export default class Layout extends React.Component {
         this.setState({ open: false });
     };
 
+    handleGoHome = () => {
+        this.props.history.push("/");
+    }
+
     render() {
         return (
             <div>
@@ -45,7 +51,9 @@ export default class Layout extends React.Component {
                         >
                             <MenuIcon />
                         </IconButton>
-                        <Typography variant="h6" color="inherit">WiseCatalog</Typography>
+                        <Typography variant="h6" color="inherit" onClick={this.handleGoHome}>
+                            WiseCatalog
+                        </Typography>
                     </Toolbar>
                 </AppBar>
                 <Drawer
@@ -82,3 +90,4 @@ export default class Layout extends React.Component {
             </div>);
     }
 }
+export default withRouter(Layout);

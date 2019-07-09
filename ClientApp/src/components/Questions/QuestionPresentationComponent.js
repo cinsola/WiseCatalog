@@ -4,7 +4,7 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import EditText from 'react-editext'
 
-export class SurveyQuestion extends React.Component {
+export default class QuestionPresentationComponent extends React.Component {
     constructor(props) {
         super(props);
         this.state = {

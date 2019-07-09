@@ -2,8 +2,8 @@
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { actionCreators } from './SurveysStore';
-import Survey from './SurveyComponent';
-import { SurveyQuestion } from './SurveyQuestionComponent';
+import SurveyPresentationComponent from './SurveyPresentationComponent'
+import QuestionPresentationComponent from '../Questions/QuestionPresentationComponent';
 import WithLoading from '../LoadingHOC';
 class SurveyDetailComponent extends React.Component {
     constructor(props) {
@@ -17,9 +17,9 @@ class SurveyDetailComponent extends React.Component {
     render() {
         return (
             <div>
-                <Survey survey={this.props.survey} withLinks={false} />
+                <SurveyPresentationComponent survey={this.props.survey} withLinks={false} />
                 {this.props.survey.questions.map(question =>
-                    <SurveyQuestion key={question.id} question={question} sendMutation={(val) => this.sendMutation(question.id, val.name)} />
+                    <QuestionPresentationComponent key={question.id} question={question} sendMutation={(val) => this.sendMutation(question.id, val.name)} />
                 )}
             </div>
         );

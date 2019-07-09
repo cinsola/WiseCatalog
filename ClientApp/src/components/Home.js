@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Surveys from './Surveys/SurveysComponent';
+import SurveyCollectionComponent from './Surveys/SurveyCollectionComponent';
 
 class Home extends React.Component {
     constructor(props) {
@@ -10,7 +10,7 @@ class Home extends React.Component {
     render() {
         return (
             <div>
-                <Surveys />
+                <SurveyCollectionComponent />
             </div>
         );
     }
