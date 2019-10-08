@@ -1,11 +1,15 @@
 ﻿import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
 import thunk from 'redux-thunk';
-import { routerReducer, routerMiddleware } from 'react-router-redux';
-import * as SurveysStore from '../components/Surveys/SurveysStore';
+import { routerMiddleware, connectRouter } from 'connected-react-router';
+import * as SurveysStore from './SurveysStore';
+import * as SurveyStore from './SurveyStore';
 export default function configureStore(history, initialState) {
     const reducers = {
-        surveysReducer: SurveysStore.reducer
+        router: connectRouter(history),
+        surveysReducer: SurveysStore.surveysReducer,
+        surveyReducer: SurveyStore.surveyReducer
     };
+
 
     const middleware = [
         thunk,
@@ -20,8 +24,7 @@ export default function configureStore(history, initialState) {
     }
 
     const rootReducer = combineReducers({
-        ...reducers,
-        routing: routerReducer
+        ...reducers
     });
 
     return createStore(

@@ -14,8 +14,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { Link } from 'react-router-dom';
 import { withRouter } from "react-router-dom";
+import Box from '@material-ui/core/Box';
 
 class Layout extends React.Component {
     constructor(props) {
@@ -85,7 +85,9 @@ class Layout extends React.Component {
                     </List>
                 </Drawer>
                 <main>
-                    {this.props.children}
+                    <Box m={2}>
+                        {this.props.children}
+                    </Box>
                 </main>
             </div>);
     }

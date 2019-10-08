@@ -1,23 +1,22 @@
 ﻿import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { actionCreators } from './SurveysStore';
+import { surveysActionCreators } from '../../store/SurveysStore';
 import WithLoading from '../LoadingHOC';
 import SurveyPresentationComponent from './SurveyPresentationComponent';
+import Grid from '@material-ui/core/Grid';
+
 class SurveyCollectionComponent extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
-
     render() {
         return (
-            <section>
+            <Grid spacing={2} container direction="column">
                 {this.props.surveys.map(survey =>
-                    <SurveyPresentationComponent key={survey.id} survey={survey} />
+                    (<Grid item key={survey.id}>
+                        <SurveyPresentationComponent survey={survey} />
+                    </Grid>)
                 )}
-            </section>);
+            </Grid>);
     }
 }
+
 const SurveysWithLoading = WithLoading(SurveyCollectionComponent, (_context) => _context.props.requestSurveys());
-export default connect(state => state.surveysReducer, dispatch => bindActionCreators(actionCreators, dispatch))(SurveysWithLoading);
+export default connect(state => state.surveysReducer, surveysActionCreators)(SurveysWithLoading);

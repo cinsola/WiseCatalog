@@ -1,36 +1,11 @@
-﻿const resetLoading = "RESET_LOADING";
-const requestSurveys = "REQUEST_SURVEYS";
-const receiveSurveys = "RECEIVE_SURVEYS";
-const requestSurvey = "REQUEST_SURVEY";
+﻿const requestSurvey = "REQUEST_SURVEY";
 const receiveSurvey = "RECEIVE_SURVEY";
 const requestSurveyQuestionMutation = "REQUEST_SURVEY_QUESTION_MUTATION";
 const receiveSurveyQuestionMutation = "RECEIVE_SURVEY_QUESTION_MUTATION";
+
 const graphQlService = "graphql";
-const initialState = { surveys: [], isLoading: true, survey: null };
-export const actionCreators = {
-    resetLoading: () => function (dispatch, getState) {
-        dispatch({ type: resetLoading })
-    },
-    requestSurveys: () => async function (dispatch, getState) {
-        dispatch({ type: requestSurveys });
-        const response = await fetch(graphQlService, {
-            method: "POST",
-            headers: new Headers({
-                "accept": "application/json",
-                "content-type": "application/json"
-            }),
-            body: JSON.stringify({
-                query: `{
-                  surveys {
-                    id
-                    name
-                  }
-                }`
-            })
-        });
-        const responseAsJson = await response.json();
-        dispatch({ type: receiveSurveys, surveys: responseAsJson.data.surveys });
-    },
+const initialState = { isLoading: true, survey: null };
+export const surveyActionCreators = {
     requestSurvey: id => async function (dispatch, getState) {
         dispatch({ type: requestSurvey });
 
@@ -57,8 +32,8 @@ export const actionCreators = {
         const responseAsJson = await response.json();
         dispatch({ type: receiveSurvey, survey: responseAsJson.data.survey });
     },
-    requestSurveyQuestionMutation: (questionId, surveyId, name) => async function (dispatch, getState) {
-        dispatch({ type: requestSurveyQuestionMutation });
+    requestSurveyQuestionMutation: (surveyId, questionId, name) => async function (dispatch, getState) {
+        dispatch({ type: requestSurveyQuestionMutation, questionId: questionId });
 
         const response = await fetch(graphQlService, {
             method: "POST",
@@ -75,34 +50,19 @@ export const actionCreators = {
                 variables: { "question": { "name": name, "surveyId": surveyId }, "questionId": questionId }
             })
         });
-        var isOk = response.status == 200;
-        dispatch({ type: receiveSurveyQuestionMutation, isResolved: isOk });
+
+        dispatch({ type: receiveSurveyQuestionMutation, questionId: questionId, question: (await response.json()).data.updateQuestion });
     }
 };
 
-export const reducer = function(state, action) {
+export const surveyReducer = function (state, action) {
     state = state || initialState;
     switch (action.type) {
-        case resetLoading:
-            return {
-                ...state,
-                isLoading: true
-            };
-        case requestSurveys:
-            return {
-                ...state,
-                isLoading: true
-            };
         case requestSurvey:
+            state.isLoading = true;
             return {
                 ...state,
                 isLoading: true
-            };
-        case receiveSurveys:
-            return {
-                ...state,
-                isLoading: false,
-                surveys: action.surveys
             };
         case receiveSurvey:
             return {
@@ -110,7 +70,44 @@ export const reducer = function(state, action) {
                 isLoading: false,
                 survey: action.survey
             };
+        case requestSurveyQuestionMutation:
+            return {
+                ...state,
+                survey: {
+                    ...state.survey,
+                    questions: state.survey.questions.map(x => {
+                        if (x.id === action.questionId) {
+                            return { ...x, isLoadingOnContext: true };
+                        } else {
+                            return { ...x };
+                        }
+                    })
+                }
+            };
+        case receiveSurveyQuestionMutation:
+            return {
+                ...state,
+                survey: {
+                    ...state.survey,
+                    questions: state.survey.questions.map(x => {
+                        if (x.id === action.questionId) {
+                            return { ...x, name: action.question.name, isLoadingOnContext: false };
+                        } else {
+                            return { ...x };
+                        }
+                    })
+                }
+            };
+            //return (() => {
+            //    var newState = { ...state };
+            //    for (let el of newState.survey.questions) {
+            //        if (el.id === action.questionId) {
+            //            el.isLoadingOnContext = true;
+            //        }
+            //    }
+            //    return Object.assign({}, newState);
+            //})();
         default:
             return state;
     }
-}
+};
