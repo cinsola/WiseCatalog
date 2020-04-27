@@ -24,6 +24,7 @@ namespace WiseCatalog.Data
 
         internal void EnsureSeedData(UserManager<ApplicationUser> _userManager, RoleManager<ApplicationUserRole> _roleManager)
         {
+
             ApplicationUsersInitializer.SeedData(_userManager, _roleManager);
             var user = Users.First(x => x.Email == "test@localhost");
             Survey[] defaultSurveys = new Survey[] {
