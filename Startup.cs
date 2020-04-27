@@ -101,7 +101,7 @@ namespace WiseCatalog
                     name: "default",
                     template: "{controller}/{action=Index}/{id?}");
             });
-            app.UseSwaggerUi3WithApiExplorer();
+            app.UseSwaggerUi3();
             app.UseSpa(spa =>
             {
                 spa.Options.SourcePath = "ClientApp";
