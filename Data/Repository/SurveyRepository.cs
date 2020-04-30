@@ -16,41 +16,41 @@ namespace WiseCatalog.Data.Repository
             this._contextFactory = _dbContextFactory;
         }
 
-        public async Task<Dictionary<int, Question>> GetQuestionsByIdAsync(IEnumerable<int> questionsId, CancellationToken token)
+        public Dictionary<int, Question> GetQuestionsByIdAsync(IEnumerable<int> questionsId, CancellationToken token)
         {
-            return await _contextFactory.InvokeSafe(c => c.Questions.Where(i => questionsId.Contains(i.Id)).ToDictionaryAsync(x => x.Id));
+            return _contextFactory.InvokeSafe(c => c.QuestionsReader.Where(i => questionsId.Contains(i.Id)).ToDictionary(x => x.Id));
         }
 
-        public async Task<Dictionary<int, Survey>> GetSurveysByIdAsync(IEnumerable<int> surveysId, CancellationToken token)
+        public Dictionary<int, Survey> GetSurveysByIdAsync(IEnumerable<int> surveysId, CancellationToken token)
         {
-            return await _contextFactory.InvokeSafe(c => c.Surveys.Where(i => surveysId.Contains(i.Id)).ToDictionaryAsync(x => x.Id));
+            return _contextFactory.InvokeSafe(c => c.SurveysReader.Where(i => surveysId.Contains(i.Id)).ToDictionary(x => x.Id));
         }
 
         internal List<Question> Questions()
         {
-            return _contextFactory.InvokeSafe(c => c.Questions.ToList());
+            return _contextFactory.InvokeSafe(c => c.QuestionsReader.ToList());
         }
         internal List<Survey> Surveys()
         {
-            return _contextFactory.InvokeSafe(c => c.Surveys.ToList());
+            return _contextFactory.InvokeSafe(c => c.SurveysReader.ToList());
         }
         internal Question GetQuestion(int id)
         {
-            return _contextFactory.InvokeSafe(c => c.Questions.Find(id));
+            return _contextFactory.InvokeSafe(c => c.QuestionsReader.FirstOrDefault(x => x.Id == id));
         }
 
         internal Survey GetSurvey(int id)
         {
-            return _contextFactory.InvokeSafe(c => c.Surveys.Find(id));
+            return _contextFactory.InvokeSafe(c => c.SurveysReader.FirstOrDefault(x => x.Id == id));
         }
 
         internal Question AddQuestion(Question question)
         {
             using (var _dbContext = _contextFactory.CreateDbContext())
             {
-                var item = _dbContext.Questions.Add(question);
+                var item = _dbContext.QuestionsReader.AddEntry(question);
                 _dbContext.SaveChanges();
-                return item.Entity;
+                return item;
             }
         }
 
@@ -58,7 +58,7 @@ namespace WiseCatalog.Data.Repository
         {
             using (var _dbContext = _contextFactory.CreateDbContext())
             {
-                var item = _dbContext.Questions.Find(questionId);
+                var item = _dbContext.QuestionsReader.FirstOrDefault(x => x.Id == questionId);
                 if (item.Name != questionUpdated.Name) { item.Rename(questionUpdated.Name); }
                 _dbContext.SaveChanges();
                 return item;
@@ -67,11 +67,11 @@ namespace WiseCatalog.Data.Repository
 
         internal List<Question> GetQuestionsBySurvey(int id)
         {
-            return _contextFactory.InvokeSafe(c => c.Questions.Where(x => x.SurveyId == id).ToList());
+            return _contextFactory.InvokeSafe(c => c.QuestionsReader.Where(x => x.SurveyId == id).ToList());
         }
         internal Survey GetSurveyByQuestion(int id)
         {
-            return _contextFactory.InvokeSafe(c => c.Questions.Include(x => x.Survey).First(x => x.Id == id).Survey);
+            return _contextFactory.InvokeSafe(c => c.QuestionsReader.OriginalDbSet.Include(x => x.Survey).First(x => x.Id == id).Survey);
         }
     }
 }

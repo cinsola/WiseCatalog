@@ -1,36 +1,38 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using GraphQL.Builders;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System;
+using WiseCatalog.Data.SqlServer;
 
 namespace WiseCatalog.Data
 {
-    public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
+    public class ApplicationDbContextFactory
     {
-        private string _connectionString;
-        public ApplicationDbContextFactory(string connectionString)
+        static private Func<IDataContext> ResolveCreateDbContext;
+        public IDataContext CreateDbContext(string[] args)
         {
-            _connectionString = connectionString;
+            return ResolveCreateDbContext();
         }
 
-        public ApplicationDbContext CreateDbContext(string[] args)
-        {
-            var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-            optionsBuilder.UseSqlServer(_connectionString);
-
-            return new ApplicationDbContext(optionsBuilder.Options);
-        }
-        public ApplicationDbContext CreateDbContext()
+        public IDataContext CreateDbContext()
         {
             return CreateDbContext(null);
         }
 
-        public T InvokeSafe<T>(Func<ApplicationDbContext, T> action)
+        public T InvokeSafe<T>(Func<IDataContext, T> action)
         {
             T result = default(T);
             var s = CreateDbContext();
-                result = action(s);
-                return result;
+            result = action(s);
+            return result;
         }
 
+        internal static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        {
+            var dbApiType = Type.GetType(configuration["api"]);
+            ResolveCreateDbContext = (Func<IDataContext>)dbApiType.GetMethod("ConfigureServices").Invoke(null, new object[] { services, configuration });
+        }
     }
 }

@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using WiseCatalog.Data;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+
 namespace WiseCatalog
 {
     public class Program
@@ -12,13 +14,10 @@ namespace WiseCatalog
             var host = CreateWebHostBuilder(args).Build();
             using (var scope = host.Services.CreateScope())
             {
-                var userManager = (UserManager<ApplicationUser>)scope.ServiceProvider.GetService(typeof(UserManager<ApplicationUser>));
-                var roleManager = (RoleManager<ApplicationUserRole>)scope.ServiceProvider.GetService(typeof(RoleManager<ApplicationUserRole>));
                 var dbContext = (ApplicationDbContextFactory)scope.ServiceProvider.GetService(typeof(ApplicationDbContextFactory));
                 using (var scopedContext = dbContext.CreateDbContext())
                 {
-                    scopedContext.Database.EnsureCreated();
-                    scopedContext.EnsureSeedData(userManager, roleManager);
+                    scopedContext.EnsureSeedData(scope);
                 }
             }
             host.Run();
@@ -26,6 +25,10 @@ namespace WiseCatalog
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                        .ConfigureAppConfiguration((hostingContext, config) =>
+                        {
+                            config.AddJsonFile("appsettings.secrets.json");
+                        })
                 .UseStartup<Startup>();
     }
 }

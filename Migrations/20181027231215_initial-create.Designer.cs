@@ -6,10 +6,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WiseCatalog.Data;
+using WiseCatalog.Data.SqlServer;
 
 namespace WiseCatalog.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
+    [DbContext(typeof(SqlServerApplicationDbContext))]
     [Migration("20181027231215_initial-create")]
     partial class initialcreate
     {
