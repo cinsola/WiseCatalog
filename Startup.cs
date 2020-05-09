@@ -33,10 +33,12 @@ namespace WiseCatalog
         {
             var connection = Configuration.GetValue<string>("Connection");
             services.AddDbContext<ApplicationDbContext>(opt => opt.UseSqlServer(connection), ServiceLifetime.Transient);
-            services.AddSingleton<ApplicationDbContextFactory>(new ApplicationDbContextFactory(connection));
             services.AddIdentity<ApplicationUser, ApplicationUserRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
+
+            services.AddSingleton<ApplicationDbContextFactory>(new ApplicationDbContextFactory(connection));
             services.Configure<IdentityOptions>(options =>
             {
                 options.Password.RequireDigit = false;
@@ -52,9 +54,19 @@ namespace WiseCatalog
             });
 
             services.AddScoped<SurveyRepository>();
+
+            // jwt...
+
             _configureGraphQL(services);
-            services.AddAuthentication();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            //services.AddAuthentication().AddGoogle(options =>
+            //{
+            //    var googleSection = Configuration.GetSection("GoogleSignIn");
+            //    options.ClientId = googleSection["ClientId"];
+            //    options.ClientSecret = googleSection["ClientSecret"];
+            //});
+
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/build";
@@ -73,7 +85,7 @@ namespace WiseCatalog
 
             var serviceProvider = services.BuildServiceProvider();
             services.AddSingleton<ISchema>(new ApplicationMutableSchema(new FuncDependencyResolver(type => serviceProvider.GetService(type))));
-            //services.AddSingleton<IDataLoaderContextAccessor, DataLoaderContextAccessor>();
+            //services.AddAuthentication<IDataLoaderContextAccessor, DataLoaderContextAccessor>();
             //services.AddSingleton<DataLoaderDocumentListener>();
         }
 
@@ -95,12 +107,14 @@ namespace WiseCatalog
             app.UseSpaStaticFiles();
             app.UseGraphiQl();
             app.UseAuthentication();
-            app.UseMvc(routes =>
+            app.UseRouting();
+            app.UseCors();
+
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller}/{action=Index}/{id?}");
+                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
+
             app.UseSwaggerUi3();
             app.UseSpa(spa =>
             {

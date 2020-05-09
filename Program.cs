@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using WiseCatalog.Data;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Extensions.Configuration;
+
 namespace WiseCatalog
 {
     public class Program
@@ -24,8 +27,11 @@ namespace WiseCatalog
             host.Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
+        {
+            var builder = WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>();
+            return builder.ConfigureAppConfiguration(x => x.AddJsonFile("appsettings.Secrets.json"));
+        }
     }
 }

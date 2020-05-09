@@ -43,6 +43,7 @@ TestResult.xml
 [Rr]eleasePS/
 dlldata.c
 
+*.Secrets.json
 *_i.c
 *_p.c
 *_i.h
