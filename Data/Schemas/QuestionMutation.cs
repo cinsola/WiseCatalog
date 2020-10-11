@@ -1,8 +1,4 @@
 ﻿using GraphQL.Types;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using WiseCatalog.Data.DTO;
 using WiseCatalog.Data.Repository;
 

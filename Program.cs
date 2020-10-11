@@ -20,8 +20,8 @@ namespace WiseCatalog
                 var dbContext = (ApplicationDbContextFactory)scope.ServiceProvider.GetService(typeof(ApplicationDbContextFactory));
                 using (var scopedContext = dbContext.CreateDbContext())
                 {
-                    scopedContext.Database.EnsureCreated();
-                    scopedContext.EnsureSeedData(userManager, roleManager);
+                    //scopedContext.Database.EnsureCreated();
+                    //scopedContext.EnsureSeedData(userManager, roleManager);
                 }
             }
             host.Run();

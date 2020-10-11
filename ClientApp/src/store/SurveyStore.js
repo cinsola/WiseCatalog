@@ -98,15 +98,6 @@ export const surveyReducer = function (state, action) {
                     })
                 }
             };
-            //return (() => {
-            //    var newState = { ...state };
-            //    for (let el of newState.survey.questions) {
-            //        if (el.id === action.questionId) {
-            //            el.isLoadingOnContext = true;
-            //        }
-            //    }
-            //    return Object.assign({}, newState);
-            //})();
         default:
             return state;
     }

@@ -1,5 +1,6 @@
 using GraphiQl;
 using GraphQL;
+using GraphQL.Http;
 using GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -66,7 +67,7 @@ namespace WiseCatalog
             //    options.ClientSecret = googleSection["ClientSecret"];
             //});
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            services.AddMvc().AddNewtonsoftJson(_ => _.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/build";
@@ -75,18 +76,19 @@ namespace WiseCatalog
 
         private void _configureGraphQL(IServiceCollection services)
         {
+            services.AddScoped<IDependencyResolver>(_ => new FuncDependencyResolver(_.GetRequiredService));
             services.AddScoped<IDocumentExecuter, ApplicationDocumentExecuter>();
+            services.AddScoped<IDocumentWriter, DocumentWriter>();
             services.AddScoped<QuestionQuery>();
             services.AddScoped<QuestionMutation>();
 
             services.AddScoped<QuestionType>();
             services.AddScoped<SurveyType>();
             services.AddScoped<QuestionInputType>();
+            services.AddScoped<ISchema, ApplicationMutableSchema>();
 
-            var serviceProvider = services.BuildServiceProvider();
-            services.AddSingleton<ISchema>(new ApplicationMutableSchema(new FuncDependencyResolver(type => serviceProvider.GetService(type))));
-            //services.AddAuthentication<IDataLoaderContextAccessor, DataLoaderContextAccessor>();
-            //services.AddSingleton<DataLoaderDocumentListener>();
+            //var serviceProvider = services.BuildServiceProvider();
+            //(new FuncDependencyResolver(type => serviceProvider.GetService(type))));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -105,7 +107,7 @@ namespace WiseCatalog
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
-            app.UseGraphiQl();
+            app.UseGraphiQl("/graphql");
             app.UseAuthentication();
             app.UseRouting();
             app.UseCors();

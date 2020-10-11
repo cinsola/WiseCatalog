@@ -24,12 +24,12 @@ namespace wise_catalog.Controllers
         public async Task<IActionResult> Post([FromBody] GraphQLRequest query)
         {
             if (query == null) { throw new ArgumentNullException(nameof(query)); }
-            var inputs = query.Variables.ToInputs();
             var executionOptions = new ExecutionOptions
             {
                 Schema = _schema,
                 Query = query.Query,
-                Inputs = inputs, 
+                //Inputs = query.Variables != null ? new Inputs(query.Variables) : null,
+                Inputs = query.Variables?.ToInputs(),
             };
 
             var result = await _documentExecuter.ExecuteAsync(executionOptions);
